@@ -12,10 +12,11 @@
     {
         "mcpServers": {
             "mercury-parser": {
-            "command": "npx",
-            "args": [
-                "@koichikawamura/mercury-parser"
-            ]
+                "command": "npx",
+                "args": [
+                    "@koichikawamura/mercury-parser"
+                ]
             }
+        }
     }
     ```
