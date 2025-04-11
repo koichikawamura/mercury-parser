@@ -1,0 +1,27 @@
+{
+  "name": "@koichikawamura/mercury-parser",
+  "version": "0.1.3",
+  "files": [
+    "mcp-server.js",
+    "extractContent.js",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "bin": {
+    "mercury-parser": "mcp-server.js",
+    "mercury-parser-cli": "extractContent.js",
+    "mercury-parser-mcp": "mcp-server.js"
+  },
+  "dependencies": {
+    "@jocmp/mercury-parser": "^2.2.0",
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "html-entities": "^2.6.0",
+    "jsdom": "^26.0.0",
+    "node-fetch": "^2.7.0",
+    "zod": "^3.24.2"
+  }
+}
