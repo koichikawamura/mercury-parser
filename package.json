@@ -9,11 +9,7 @@
     "LICENSE"
   ],
   "type": "module",
-  "bin": {
-    "mercury-parser": "mcp-server.js",
-    "mercury-parser-cli": "extractContent.js",
-    "mercury-parser-mcp": "mcp-server.js"
-  },
+  "bin": "./mcp-server.js",
   "dependencies": {
     "@jocmp/mercury-parser": "^2.2.0",
     "@modelcontextprotocol/sdk": "^1.9.0",
