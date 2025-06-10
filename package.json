@@ -1,6 +1,6 @@
 {
   "name": "@koichikawamura/mercury-parser",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "files": [
     "mcp-server.js",
     "extractContent.js",
