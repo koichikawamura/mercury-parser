@@ -9,7 +9,9 @@
     "LICENSE"
   ],
   "type": "module",
-  "bin": "./mcp-server.js",
+  "bin": {
+    "mercury-parser-mcp": "./mcp-server.js"
+  },
   "dependencies": {
     "@jocmp/mercury-parser": "^2.2.0",
     "@modelcontextprotocol/sdk": "^1.9.0",

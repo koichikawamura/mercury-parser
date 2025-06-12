@@ -14,7 +14,8 @@
             "mercury-parser": {
                 "command": "npx",
                 "args": [
-                    "@koichikawamura/mercury-parser"
+                    "@koichikawamura/mercury-parser",
+                    "mercury-parser-mcp"
                 ]
             }
         }
