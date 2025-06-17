@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/koichikawamura-mercury-parser-badge.png)](https://mseep.ai/app/koichikawamura-mercury-parser)
+
 # mercury-parser
 
 - This is an MCP wrapper to [jocmp/mercury-parser: A maintained fork of Postlight Parser](https://github.com/jocmp/mercury-parser)
