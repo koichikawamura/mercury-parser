@@ -63,7 +63,11 @@ const extractContentToMarkdown = async (url) => {
   }
 
   const browser = await getBrowser();
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
+      '(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  });
   const page = await context.newPage();
 
   try {
@@ -75,13 +79,10 @@ const extractContentToMarkdown = async (url) => {
       console.error(`Fetching page: ${currentUrl}`);
       visitedUrls.add(currentUrl);
 
-      await page.goto(currentUrl, { waitUntil: 'networkidle', timeout: 30000 });
-      const html = await page.content();
-
-      const result = await Mercury.parse(currentUrl, { html });
+      const result = await fetchAndParse(page, currentUrl);
       allPages.push(result);
 
-      currentUrl = await findNextPageLink(page);
+      currentUrl = await findNextPageLinkSafe(page);
     }
 
     return formatMarkdown(allPages, url);
@@ -89,6 +90,26 @@ const extractContentToMarkdown = async (url) => {
     await context.close();
   }
 };
+
+async function fetchAndParse(page, url) {
+  try {
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    const html = await page.content();
+    return await Mercury.parse(url, { html });
+  } catch (err) {
+    console.error(`[mercury-parser] Playwright fetch failed for ${url}: ${err.message}. Falling back to direct fetch.`);
+    return await Mercury.parse(url);
+  }
+}
+
+async function findNextPageLinkSafe(page) {
+  try {
+    if (!page.url() || page.url() === 'about:blank') return null;
+    return await findNextPageLink(page);
+  } catch {
+    return null;
+  }
+}
 
 async function findNextPageLink(page) {
   return page.evaluate(() => {
