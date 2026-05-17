@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import extractContentToMarkdown from './extractContent.js';
+import extractContentToMarkdown, { closeBrowser } from './extractContent.js';
 
 // Create an MCP server
 const server = new McpServer({
@@ -83,10 +83,13 @@ const start = async () => {
 };
 
 // Handle process termination
-process.on('SIGINT', () => {
-  console.error('Received SIGINT, shutting down');
+const shutdown = async (signal) => {
+  console.error(`Received ${signal}, shutting down`);
+  await closeBrowser();
   process.exit(0);
-});
+};
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
 
 process.on('uncaughtException', (err) => {
   console.error(`Uncaught exception: ${err.message}`);

@@ -1,6 +1,6 @@
 {
   "name": "@koichikawamura/mercury-parser",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "files": [
     "mcp-server.js",
     "extractContent.js",
@@ -15,11 +15,8 @@
   "dependencies": {
     "@jocmp/mercury-parser": "^2.2.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.3",
     "html-entities": "^2.6.0",
-    "jsdom": "^26.0.0",
-    "node-fetch": "^2.7.0",
+    "playwright": "^1.60.0",
     "zod": "^3.24.2"
   }
 }
