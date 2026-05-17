@@ -12,19 +12,22 @@ const server = new McpServer({
 });
 
 // Register a tool that extracts content from a URL and returns it as markdown
-server.tool(
-  "extract", 
-  "Extract content from a website and convert it to markdown format",
+server.registerTool(
+  "extract",
   {
-    url: z.string().describe("URL of the website to extract content from")
+    title: "Extract Web Content",
+    description: "Extract content from a website and convert it to markdown format",
+    inputSchema: {
+      url: z.string().describe("URL of the website to extract content from")
+    }
   },
   async ({ url }) => {
     try {
       console.error(`Handling extract request for URL: ${url}`);
-      
+
       const markdown = await extractContentToMarkdown(url);
       console.error(`Successfully extracted content from: ${url}`);
-      
+
       return {
         content: [
           {
@@ -41,14 +44,19 @@ server.tool(
 );
 
 // Create a resource that provides information about the service
-server.resource(
+server.registerResource(
   "info",
   "resource://postlight/info",
-  async () => {
+  {
+    title: "Mercury Parser Info",
+    description: "Information about the Mercury Parser Markdown Converter service",
+    mimeType: "application/json"
+  },
+  async (uri) => {
     return {
       contents: [
         {
-          uri: "resource://postlight/info",
+          uri: uri.href,
           text: JSON.stringify({
             name: "Mercury Parser Markdown Converter",
             description: "MCP service that extracts content from websites and converts it to markdown format",
