@@ -19,13 +19,16 @@ const buildServer = () => {
       title: "Extract Web Content",
       description: "Extract content from a website and convert it to markdown format",
       inputSchema: {
-        url: z.string().describe("URL of the website to extract content from")
+        url: z.string().describe("URL of the website to extract content from"),
+        proxy: z.string().optional().describe(
+          "Optional proxy URL for the headless browser, e.g. socks5://localhost:1080 or http://user:pass@host:port"
+        )
       }
     },
-    async ({ url }) => {
+    async ({ url, proxy }) => {
       try {
-        console.error(`Handling extract request for URL: ${url}`);
-        const markdown = await extractContentToMarkdown(url);
+        console.error(`Handling extract request for URL: ${url}${proxy ? ` via proxy ${proxy}` : ''}`);
+        const markdown = await extractContentToMarkdown(url, { proxy });
         console.error(`Successfully extracted content from: ${url}`);
         return {
           content: [{ type: "text", text: markdown }]

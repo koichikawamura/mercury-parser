@@ -5,11 +5,17 @@ import { decode } from 'html-entities';
 import { chromium } from 'playwright';
 import { spawn } from 'child_process';
 
-let browserPromise = null;
+const browserPromises = new Map();
 
-async function launchOrInstall() {
+function launchOptions(proxy) {
+  const opts = { headless: true };
+  if (proxy) opts.proxy = { server: proxy };
+  return opts;
+}
+
+async function launchOrInstall(proxy) {
   try {
-    return await chromium.launch({ headless: true });
+    return await chromium.launch(launchOptions(proxy));
   } catch (err) {
     const message = err?.message || '';
     const looksLikeMissingBrowser =
@@ -29,30 +35,33 @@ async function launchOrInstall() {
       );
       child.on('error', reject);
     });
-    return await chromium.launch({ headless: true });
+    return await chromium.launch(launchOptions(proxy));
   }
 }
 
-function getBrowser() {
-  if (!browserPromise) {
-    browserPromise = launchOrInstall();
+function getBrowser(proxy) {
+  const key = proxy || '';
+  if (!browserPromises.has(key)) {
+    browserPromises.set(key, launchOrInstall(proxy));
   }
-  return browserPromise;
+  return browserPromises.get(key);
 }
 
 export async function closeBrowser() {
-  if (!browserPromise) return;
-  const promise = browserPromise;
-  browserPromise = null;
-  try {
-    const browser = await promise;
-    await browser.close();
-  } catch (err) {
-    console.error(`[mercury-parser] Error closing browser: ${err.message}`);
+  const entries = Array.from(browserPromises.entries());
+  browserPromises.clear();
+  for (const [, promise] of entries) {
+    try {
+      const browser = await promise;
+      await browser.close();
+    } catch (err) {
+      console.error(`[mercury-parser] Error closing browser: ${err.message}`);
+    }
   }
 }
 
-const extractContentToMarkdown = async (url) => {
+const extractContentToMarkdown = async (url, options = {}) => {
+  const proxy = options.proxy || process.env.MERCURY_PROXY || undefined;
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     throw new Error(`Invalid URL: ${url}. Only HTTP and HTTPS protocols are supported.`);
   }
@@ -62,7 +71,7 @@ const extractContentToMarkdown = async (url) => {
     throw new Error(`Invalid URL format: ${url}`);
   }
 
-  const browser = await getBrowser();
+  const browser = await getBrowser(proxy);
   const context = await browser.newContext({
     userAgent:
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
@@ -192,11 +201,12 @@ export default extractContentToMarkdown;
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   if (process.argv.length < 3) {
-    console.error('Usage: node extractContent.js <url>');
+    console.error('Usage: node extractContent.js <url> [proxy]');
     process.exit(1);
   }
   const url = process.argv[2];
-  extractContentToMarkdown(url)
+  const proxy = process.argv[3];
+  extractContentToMarkdown(url, { proxy })
     .then(async markdown => {
       console.log(markdown);
       await closeBrowser();
