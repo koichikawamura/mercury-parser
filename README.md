@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/koichikawamura-mercury-parser-badge.png)](https://mseep.ai/app/koichikawamura-mercury-parser)
+
 # mercury-parser
 
 An MCP wrapper around [jocmp/mercury-parser](https://github.com/jocmp/mercury-parser) (a maintained fork of Postlight Parser). Fetches a web page with a headless Chromium (Playwright) so JavaScript-rendered content is captured, then runs Mercury Parser to extract the article and returns it as Markdown. Follows pagination links automatically.
